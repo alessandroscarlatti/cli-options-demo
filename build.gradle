@@ -1,0 +1,89 @@
+buildscript {
+    repositories {
+        jcenter()  // for plugin dependencies
+        maven {
+            url "https://dl.bintray.com/alessandroscarlatti/maven"
+        }
+    }
+    dependencies {
+        classpath 'com.scarlatti:launch4j-gradle-plugin:2.0.2'
+    }
+}
+
+apply plugin: 'com.scarlatti.launch4j-helper'
+
+group 'com.scarlatti'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'groovy'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+//    compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
+    compile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.5.2'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+class CliTask extends JavaExec {
+
+    CliTask() {
+        group = "cli"
+
+        classpath = project.sourceSets.main.runtimeClasspath
+        main = "com.scarlatti.cli.App"
+    }
+}
+
+task invocation1(type: CliTask) {
+    args = ["-t", "what do you know"]
+}
+
+task invocation2(type: CliTask) {
+    args = ["hey", "-t", "what do you know"]
+}
+
+task help(type: CliTask) {
+    args = ["--help"]
+}
+
+task echo(type: CliTask) {
+    args = ["echo", "--help"]
+}
+
+task picoCli(type: CliTask) {
+    main = "com.scarlatti.cli.App2"
+    args = ["echo", "what do you know"]
+}
+
+task picoCliEchoHelp(type: CliTask) {
+    main = "com.scarlatti.cli.App2"
+    args = ["help", "echo"]
+}
+
+task picCliMainHelp(type: CliTask) {
+    main = "com.scarlatti.cli.App2"
+    args = ["help"]
+}
+
+task picCliSpringBootApp(type: CliTask) {
+    main = "com.scarlatti.cli.App2"
+    args = ["app"]
+}
+
+import com.scarlatti.launch4j.task.Launch4jHelperTask
+
+launch4jHelper {
+    mainClass {
+        mainClassName = "com.scarlatti.cli.App2"
+    }
+}
+
+task util(type: Launch4jHelperTask) {
+    launch4jTask(createExe)
+}
+
